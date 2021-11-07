@@ -1,3 +1,7 @@
+LOGIN: 
+user: admin 
+pass: 1234
+
 Seminario de software
 UNICAH - Periodo 2, 2021
 Parcial 2
