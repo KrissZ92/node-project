@@ -1,0 +1,84 @@
+extends base.pug
+
+block head
+    link(rel="stylesheet", href="/DataTables/dataTables.min.css")
+block title
+    title Departamentos
+
+block container
+    if departments
+        .row
+            .col-3
+                h3.text-center Registrar Departamento
+                    if edit
+                        form.form-group.mt-3(action=`/departments/update/${department.id_department}` method="post" id="DepartmentsFormUpdate")
+                            input.form-control.mb-2(type="text" name="department" id="department" value=`${department.department}` placeholder="Departamento" required
+                                oninvalid="this.setCustomValidity('Este campo está vacio')" oninput="this.setCustomValidity('')")
+                            div
+                                label.text-success(style={"font-size":"20px"}) Habilitado
+                                if department.state==1
+                                    input.mx-2(type="radio" name="state" value="1" checked)
+                                else
+                                    input.mx-2(type="radio" name="state" value="1")
+                                label.text-danger(style={"font-size":"20px"}) Deshabilidato
+                                if department.state==0
+                                    input.mx-2(type="radio" name="state" value="0" checked)
+                                else
+                                    input.mx-2(type="radio" name="state" value="0")
+                            .row
+                                .col-6.align-items-end
+                                    button#btnGuardar.btn.btn-primary.mt-2(type="submit") Actualizar
+                                .col-6.align-items-start
+                                    a.btn.btn-danger.mt-2(type="button" id="CancelBtn" href='/departments') Cancelar
+                    else
+                        form.form-group.mt-3(action="/departments/create" method="post" id="DepartmentsForm")
+                            input.form-control.mb-2(type="text" name="department" id="department" placeholder="Departamento" required
+                                oninvalid="this.setCustomValidity('Este campo está vacio')" oninput="this.setCustomValidity('')")
+                            div
+                                label.text-success(style={"font-size":"20px"}) Habilitado
+                                input.mx-2(type="radio" name="state" value="1" checked)
+                                label.text-danger(style={"font-size":"20px"}) Deshabilidato
+                                input.mx-2(type="radio" name="state" value="0")
+                            .row
+                                .col-6.align-items-end
+                                    button#btnGuardar.btn.btn-primary.mt-2(type="submit") Registrar
+            .col-9
+                h3.text-center.mb-4 Departamentos Registrados
+                table#EmployeesTable.display.table
+                    thead
+                        tr
+                            th Id
+                            th Departamento
+                            th Estado
+                            th.text-center Acciones
+                    tbody 
+                        if departments.length > 0
+                            each department in departments
+                                tr
+                                    td #{department.id_department}
+                                    td #{department.department}
+                                    if department.state == 1
+                                        td.text-success Habilitado
+                                    else
+                                        td.text-danger Deshabilitado
+                                    td.text-center
+                                        form(action='/departments/cstate/'+department.id_department, method="post") 
+                                            button.waves-effect.waves-light.btn.red.btn-small(type="submit")
+                                                if department.state
+                                                    h6.text-danger
+                                                        | Deshabilitar
+                                                else
+                                                    h6.text-success
+                                                        | Habilitar
+                                        a.waves-effect.waves-light.btn.green.btn-small(href='/departments/update/'+department.id_department) Editar
+                        else
+                            tr.text-center
+                                td No hay Departamentos Registrados
+    else 
+        h6 Error al obtener los departamentos
+block script
+    script(src="/DataTables/datatables.min.js")
+    script(src="/js/employees.js") 
+
+    
+

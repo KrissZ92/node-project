@@ -1,0 +1,112 @@
+extends base.pug
+
+block head
+    link(rel="stylesheet", href="/DataTables/dataTables.min.css")
+block title
+    title Empleados
+
+block container
+    if employees
+        .row
+            .col-3
+                h3.text-center Registrar Empleado
+                    if edit
+                        form.form-group.mt-3(action=`/employees/update/${employee.id_employee}` method="post" id="EmployeesFormUpdate")
+                            input.form-control.mb-2(type="text" name="name" id="name" value=`${employee.name}` placeholder="Nombre" 
+                                required oninvalid="this.setCustomValidity('Este campo está vacio')" oninput="this.setCustomValidity('')")
+                            input.form-control.mb-2(type="text" name="lastname" id="lastname" value=`${employee.lastname}` placeholder="Apellido" 
+                                required oninvalid="this.setCustomValidity('Este campo está vacio')" oninput="this.setCustomValidity('')")
+                            select#DepartmentCmbx.form-control.mb-2(name="id_department" required oninvalid="this.setCustomValidity('Seleccione uno de los departamentos')" 
+                                oninput="this.setCustomValidity('')") 
+                                    option(selected disabled value="") Seleccione un departamento
+                                    each department in departments
+                                        if department.state
+                                            if employee.id_department==department.id_department
+                                                option(value=department.id_department,selected) #{department.department}
+                                            else    
+                                                option(value=department.id_department) #{department.department}
+                            input.form-control.mt-b(type="text" name="phone" id="phone" value=`${employee.phone}` placeholder="Teléfono (ej:+504 99999999)" 
+                                required pattern="\\+[0-9]{3}\\s[0-9]{8}" oninvalid="this.setCustomValidity('Número de télefono no valido (ej: +504 99999999)')" oninput="this.setCustomValidity('')")
+                            div
+                                label.text-success(style={"font-size":"20px"}) Habilitado
+                                if employee.state==1
+                                    input.mx-2(type="radio" name="state" id="state1" value="1" checked)
+                                else
+                                    input.mx-2(type="radio" name="state" id="state1" value="1")
+                                label.text-danger(style={"font-size":"20px"}) Deshabilidato
+                                if employee.state==0
+                                    input.mx-2(type="radio" name="state" id="state2" value="0" checked)
+                                else
+                                    input.mx-2(type="radio" name="state" id="state2" value="0")
+                            .row
+                                .col-6.align-items-end
+                                    button#btnGuardar.btn.btn-primary.mt-2(type="submit") Actualizar
+                                .col-6.align-items-start
+                                    a.btn.btn-danger.mt-2(type="button" id="CancelBtn" href='/employees') Cancelar
+                    else
+                        form.form-group.mt-3(action="/employees/create" method="post" id="EmployeesForm")
+                            input.form-control.mb-2(type="text" name="name" id="name" placeholder="Nombre" required 
+                            oninvalid="this.setCustomValidity('Este campo está vacio')" oninput="this.setCustomValidity('')")
+                            input.form-control.mb-2(type="text" name="lastname" id="lastname" placeholder="Apellido" required 
+                            oninvalid="this.setCustomValidity('Este campo está vacio')" oninput="this.setCustomValidity('')")
+                            select#DepartmentCmbx.form-control.mb-2(name="id_department" required oninvalid="this.setCustomValidity('Seleccione uno de los departamentos')" 
+                                oninput="this.setCustomValidity('')") 
+                                    option(selected disabled value="") Seleccione un departamento
+                                    each department in departments
+                                        if department.state
+                                            option(value=department.id_department) #{department.department}
+                            input.form-control.mt-b(type="text" name="phone" id="phone" placeholder="Teléfono (ej:+504 99999999)" required 
+                            pattern="\\+[0-9]{3}\\s[0-9]{8}" oninvalid="this.setCustomValidity('Número de télefono no valido (ej: +504 99999999)')" oninput="this.setCustomValidity('')")
+                            div
+                                label.text-success(style={"font-size":"20px"}) Habilitado
+                                input.mx-2(type="radio" name="state" value="1" checked)
+                                label.text-danger(style={"font-size":"20px"}) Deshabilidato
+                                input.mx-2(type="radio" name="state" value="0")
+                            .row
+                                .col-6.align-items-end
+                                    button#btnGuardar.btn.btn-primary.mt-2(type="submit") Registrar
+            .col-9
+                h3.text-center.mb-4 Empleados Registrados
+                table#EmployeesTable.display.table
+                    thead
+                        tr
+                            th Id
+                            th Nombre
+                            th Apellido
+                            th Departamento
+                            th Teléfono
+                            th Estado
+                            th.text-center Acciones
+                    tbody 
+                        if employees.length > 0
+                            each employee in employees
+                                tr
+                                    td #{employee.id_employee}
+                                    td #{employee.name}
+                                    td #{employee.lastname}
+                                    each department in departments
+                                        if department.id_department == employee.id_department
+                                            td #{department.department}
+                                    td #{employee.phone}
+                                    if employee.state == 1
+                                        td.text-success Habilitado
+                                    else
+                                        td.text-danger Deshabilitado
+                                    td.text-center
+                                        form(action='/employees/cstate/'+employee.id_employee, method="post") 
+                                            button.waves-effect.waves-light.btn.red.btn-small(type="submit")
+                                                if employee.state
+                                                    h6.text-danger
+                                                        | Deshabilitar
+                                                else
+                                                    h6.text-success
+                                                        | Habilitar
+                                        a.waves-effect.waves-light.btn.green.btn-small(href='/employees/update/'+employee.id_employee) Editar
+                        else
+                            tr.text-center
+                                td No hay Empleados Registrados
+    else 
+        h6 Error al obtener los empleados
+block script
+    script(src="/DataTables/datatables.min.js")
+    script(src="/js/employees.js") 
