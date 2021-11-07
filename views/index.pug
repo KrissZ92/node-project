@@ -1,10 +1,18 @@
-extends base.pug
-
-block title
-    title Welcome
-
-block container
-    p Hola #{user.fullname}
-    a(href="/logout") Logout
-    hr
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        link(rel="stylesheet", href="/bootstrap/bootstrap.min.css")
+        block title        
+        block head
+    body
+        nav.navbar.navbar-expand-lg.navbar-dark.bg-primary.justify-content-center
+            a.btn.btn-outline-dark(href='/employees' style='color:green;margin:5px;background-color:white;margin-left:25%') Empleados
+            a.btn.btn-outline-dark(href='/departments' style='color:green;margin:5px;background-color: white;') Departamentos
+            a.btn.btn-outline-dark(href='/logout' style='color:green;margin:5px;background-color: white;margin-left:25%;') Logout
+        .container.mt-3
+            block container
+    block script
 
